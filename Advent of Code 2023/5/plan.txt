@@ -1,0 +1,21 @@
+Seeds in pairs [start, length]
+
+current range [match, start, length]
+
+seedPairs = pairs.map(x=>x)
+
+tempMap = Array(seedPairs.length)
+foreach range {
+	intersects if:
+	range.start <= pair.start+pair.length && pair.start =< range.end
+
+	if (pair.start < range.start) {
+		tempMap.splice(index-1, 0, [pair.start, range.start])
+	}
+
+	if (range.end < pair.end) {
+		tempMap.splice(index+1, 0, [range.end, pair.end])
+	}
+
+	tempMap.splice(index, 1, [pair.start + (range.match-range.start), Math.min(range.end, pair.end)])
+}
