@@ -30,8 +30,18 @@ export function solution() {
             chars[cards[i]] = (chars[cards[i]] ?? 0) + 1
         }
         
-        let values = Object.values(chars)
         let counts = 0;
+        if (chars["J"] && chars["J"] < 5) {
+            let num = chars["J"]
+            let jTemp, temp;
+            ({"J": jTemp, ...temp} = chars)
+            let max = Object.keys(temp).reduce((a, b) => temp[a] > temp[b] ? a : b);
+            chars[max] += num
+            delete chars["J"]
+        }
+
+        let values = Object.values(chars)
+
         switch (values.length) {
             case 1:
                 counts = 6;
