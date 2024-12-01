@@ -8,37 +8,27 @@ export function solution() {
 
     let seeds = []
     for (let i = 0; i<file[0][0].length; i+=2) {
-        seeds.push(seeds.slice(i, i+2));
+        seeds.push(file.slice(i, i+2));
     }
     
     let currentStep = file[0][0].map(x=>x)
 
-    for (let i = 1; i < file.length; i++) {
-        let ranges = file[i]
-        let map = Array(currentStep.length)
-         
-        for (let range of ranges) {
-            let size = range[2]-1;
-            let start = range[1];
-            let mapStart = range[0];
-
-            let end = start + size;
-
-            for (let index = 0; index < currentStep.length; index++) {
-                let current = currentStep[index]
-                let seed = seeds[index];
-                if (current >= start && current <= end) {
-                    let step = current - start;
-                    map[index] = mapStart + step;
-                } else {
-                    map[index] = map[index] || current
-                }
+    let tempMap = Array(seedPairs.length)
+    file.slice(1).forEach(range => {
+        if (range.start <= pair.start+pair.length && pair.start <= range.end) {
+            if (pair.start < range.start) {
+                tempMap.splice(index-1, 0, [pair.start, range.start])
             }
-            map = map
+
+            if (range.end < pair.end) {
+                tempMap.splice(index+1, 0, [range.end, pair.end])
+            }
+
+            tempMap.splice(index, 1, [pair.start + (range.match-range.start), Math.min(range.end, pair.end)])
         }
-        currentStep = map
-    }
-    lowest = Math.min(...currentStep)
+    })
+        
+
     return lowest;
 }
 
