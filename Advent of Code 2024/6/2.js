@@ -41,7 +41,7 @@ export function solution() {
 
 function check(visitedLocations, guardPosition, direction, board) {
     if ((board[guardPosition[0]-direction[0]] && board[guardPosition[0]-direction[0]][guardPosition[1]+direction[1]] && board[guardPosition[0]-direction[0]][guardPosition[1]+direction[1]] == "#")) return
-    //if ((board[guardPosition[0]-direction[0]] && board[guardPosition[0]-direction[0]][guardPosition[1]+direction[1]] && String([guardPosition[0]-direction[0],guardPosition[1]+direction[1]]) == start)) return
+    if ((board[guardPosition[0]-direction[0]] && board[guardPosition[0]-direction[0]][guardPosition[1]+direction[1]] && String([guardPosition[0]-direction[0],guardPosition[1]+direction[1]]) == start)) return
     let rightDirection = directionChange(direction)
     if (!(board[guardPosition[0]-rightDirection[0]] && board[guardPosition[0]-rightDirection[0]][guardPosition[1]+rightDirection[1]])) return
 
@@ -55,12 +55,12 @@ function check(visitedLocations, guardPosition, direction, board) {
         }
         return
     }
-    let check = checkRow(position, rightDirection, board, visitedLocations, String([guardPosition[0]-direction[0],guardPosition[1]+direction[1]]))
+    checkRow(position, rightDirection, board, visitedLocations, String([guardPosition[0]-direction[0],guardPosition[1]+direction[1]]))
 }
 
 function checkRow(position, direction, board, visitedLocations, originalPosition) {
     position = [position[0]-(direction[0]), position[1]+(direction[1])]
-    while (position[0] > 0 && position[1] > 0 && position[0] < board.length && position[1] < board[position[0]].length) {
+    while (position[0] > -1 && position[1] > -1 && position[0] < board.length && position[1] < board[position[0]].length) {
         if (visitedLocations.includes(String(position)+String(direction)))
         {
             if (!obstructions.includes(originalPosition)) {
