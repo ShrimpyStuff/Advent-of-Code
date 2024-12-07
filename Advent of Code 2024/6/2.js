@@ -1,6 +1,6 @@
 import fs from "fs";
 
-const rawFile = fs.readFileSync('./6/input.txt',{encoding:'utf8'}).trim().replaceAll("\r", "");
+const rawFile = fs.readFileSync('./6/input2.txt',{encoding:'utf8'}).trim().replaceAll("\r", "");
 
 let loops = 0;
 let start = ""
@@ -17,7 +17,6 @@ export function solution() {
     let direction = [1, 0]
     let visitedLocations = [(String(guardPosition) + String(direction))]
 
-
     while (true) {
         let l = guardPosition[0]
         let x = guardPosition[1]
@@ -26,22 +25,23 @@ export function solution() {
             break
         }
 
-        if (board[l-direction[0]][x+direction[1]] == "#"){
-            direction = directionChange(direction)
-        }
-        guardPosition = [l-direction[0], x+direction[1]]
-
         if (!visitedLocations.includes(String(guardPosition) + String(direction))) {
             visitedLocations.push(String(guardPosition) + String(direction))
         }
         check(visitedLocations, guardPosition, direction, board)
+
+        if (board[l-direction[0]][x+direction[1]] == "#"){
+            direction = directionChange(direction)
+        }
+        
+        guardPosition = [l-direction[0], x+direction[1]]
     }
     return loops
 }
 
 function check(visitedLocations, guardPosition, direction, board) {
-    if ((board[guardPosition[0]-direction[0]] && board[guardPosition[0]-direction[0]][guardPosition[1]+direction[1]] && board[guardPosition[0]-direction[0]][guardPosition[1]+direction[1]] == "#")) return
-    if ((board[guardPosition[0]-direction[0]] && board[guardPosition[0]-direction[0]][guardPosition[1]+direction[1]] && String([guardPosition[0]-direction[0],guardPosition[1]+direction[1]]) == start)) return
+    if ((board[guardPosition[0]-direction[0]] && board[guardPosition[0]-direction[0]][guardPosition[1]+direction[1]] && board[guardPosition[0]-direction[0]][guardPosition[1]+direction[1]] === "#")) return
+    if ((board[guardPosition[0]-direction[0]] && board[guardPosition[0]-direction[0]][guardPosition[1]+direction[1]] && String([guardPosition[0]-direction[0],guardPosition[1]+direction[1]]) === start)) return
     let rightDirection = directionChange(direction)
     if (!(board[guardPosition[0]-rightDirection[0]] && board[guardPosition[0]-rightDirection[0]][guardPosition[1]+rightDirection[1]])) return
 
@@ -55,11 +55,11 @@ function check(visitedLocations, guardPosition, direction, board) {
         }
         return
     }
-    checkRow(position, rightDirection, board, visitedLocations, String([guardPosition[0]-direction[0],guardPosition[1]+direction[1]]))
+    checkRow(guardPosition, rightDirection, board, visitedLocations, String([guardPosition[0]-direction[0],guardPosition[1]+direction[1]]))
 }
 
 function checkRow(position, direction, board, visitedLocations, originalPosition) {
-    position = [position[0]-(direction[0]), position[1]+(direction[1])]
+    if (board[position[0]] && board[position[0]][position[1]] && board[position[0]][position[1]] === "#") return checkRow(position, directionChange(direction), board, visitedLocations, originalPosition)
     while (position[0] > -1 && position[1] > -1 && position[0] < board.length && position[1] < board[position[0]].length) {
         if (visitedLocations.includes(String(position)+String(direction)))
         {
@@ -67,14 +67,16 @@ function checkRow(position, direction, board, visitedLocations, originalPosition
                 loops++
                 obstructions.push(originalPosition)
             }
-            return true
+            return
         }
-        if (board[position[0]-direction[0]] && board[position[0]-direction[0]][position[1]+direction[1]] && board[position[0]-direction[0]][position[1]+direction[1]] == "#") {
-            return checkRow(position, directionChange(direction), board, visitedLocations, originalPosition)
+        if (board[position[0]-direction[0]] && board[position[0]-direction[0]][position[1]+direction[1]] && board[position[0]-direction[0]][position[1]+direction[1]] === "#") {
+            let rightDirection = directionChange(direction)
+            checkRow(position, rightDirection, board, visitedLocations, originalPosition)
+            return
         }
         position = [position[0]-direction[0], position[1]+direction[1]]
     }
-    return false
+    return
 }
 
 function directionChange(direction) {
