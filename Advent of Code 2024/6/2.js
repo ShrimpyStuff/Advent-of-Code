@@ -1,6 +1,6 @@
 import fs from "fs";
 
-const rawFile = fs.readFileSync('./6/input2.txt',{encoding:'utf8'}).trim().replaceAll("\r", "");
+const rawFile = fs.readFileSync('./6/input.txt',{encoding:'utf8'}).trim().replaceAll("\r", "");
 
 let loops = 0;
 let start = ""
@@ -40,6 +40,7 @@ export function solution() {
 }
 
 function check(visitedLocations, guardPosition, direction, board) {
+    let newVisitedLocations = []
     if ((board[guardPosition[0]-direction[0]] && board[guardPosition[0]-direction[0]][guardPosition[1]+direction[1]] && board[guardPosition[0]-direction[0]][guardPosition[1]+direction[1]] === "#")) return
     if ((board[guardPosition[0]-direction[0]] && board[guardPosition[0]-direction[0]][guardPosition[1]+direction[1]] && String([guardPosition[0]-direction[0],guardPosition[1]+direction[1]]) === start)) return
     let rightDirection = directionChange(direction)
@@ -47,6 +48,10 @@ function check(visitedLocations, guardPosition, direction, board) {
 
     let position = [guardPosition[0]-rightDirection[0],guardPosition[1]+rightDirection[1]]
     
+    if (!newVisitedLocations.includes(String(position) + String(direction))) {
+        newVisitedLocations.push(String(position) + String(direction))
+    }
+
     if (visitedLocations.includes(String(position)+String(rightDirection)))
     {
         if (!obstructions.includes(String([guardPosition[0]-direction[0],guardPosition[1]+direction[1]]))) {
@@ -55,13 +60,13 @@ function check(visitedLocations, guardPosition, direction, board) {
         }
         return
     }
-    checkRow(guardPosition, rightDirection, board, visitedLocations, String([guardPosition[0]-direction[0],guardPosition[1]+direction[1]]))
+    checkRow(guardPosition, rightDirection, board, visitedLocations, String([guardPosition[0]-direction[0],guardPosition[1]+direction[1]]), newVisitedLocations)
 }
 
-function checkRow(position, direction, board, visitedLocations, originalPosition) {
+function checkRow(position, direction, board, visitedLocations, originalPosition, newVisitedLocations) {
     if (board[position[0]] && board[position[0]][position[1]] && board[position[0]][position[1]] === "#") return checkRow(position, directionChange(direction), board, visitedLocations, originalPosition)
     while (position[0] > -1 && position[1] > -1 && position[0] < board.length && position[1] < board[position[0]].length) {
-        if (visitedLocations.includes(String(position)+String(direction)))
+        if (visitedLocations.includes(String(position)+String(direction)) || newVisitedLocations.includes(String(position)+String(direction)))
         {
             if (!obstructions.includes(originalPosition)) {
                 loops++
@@ -71,10 +76,13 @@ function checkRow(position, direction, board, visitedLocations, originalPosition
         }
         if (board[position[0]-direction[0]] && board[position[0]-direction[0]][position[1]+direction[1]] && board[position[0]-direction[0]][position[1]+direction[1]] === "#") {
             let rightDirection = directionChange(direction)
-            checkRow(position, rightDirection, board, visitedLocations, originalPosition)
+            checkRow(position, rightDirection, board, visitedLocations, originalPosition, newVisitedLocations)
             return
         }
         position = [position[0]-direction[0], position[1]+direction[1]]
+        if (!newVisitedLocations.includes(String(position) + String(direction))) {
+            newVisitedLocations.push(String(position) + String(direction))
+        }
     }
     return
 }
